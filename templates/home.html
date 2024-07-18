@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Expense Calculator</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    body {
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', sans-serif;
+        background-color: #333333;
+        color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+    .input-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .expense-container{
+        width: 80vw;
+        margin: 20px auto auto;
+    }
+    .navbar-custom {
+        padding: 10px 20px;
+    }
+    .table {
+        color: #f8f9fa;
+    }
+</style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-custom">
+        <a class="navbar-brand" href="{{ url_for('home') }}">Welcome, {{ name }}</a>
+        <form action="{{ url_for('chart', name=name) }}" method="POST">
+            <button class="btn btn-info">Report</button>
+        </form>
+        <div class="ml-auto">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="text-center mt-4 mb-4">Expense Calculator</h1>
+        <form action="{{ url_for('add_expense') }}" method="POST">
+            <div class="input-container">
+                <input type="text" class="form-control" placeholder="Enter Expense" id="expense" name="expense">
+                <input type="number" class="form-control" placeholder="Enter Price" id="price" name="price">
+                <button class="btn btn-success" id="add-expense">Add</button>
+            </div>
+        </form>
+        <h2 class="text-center mt-4">Expenses</h2>
+        <div class="expense-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th>Expense</th>
+                        <th>Price</th>
+                        <th>Created Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ expense.data }}</td>
+                        <td>Rs. {{ expense.price }}</td>
+                        <td>{{ expense.created }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_expense',expense_id = expense._id) }}" method="post">
+                                <button class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Modal -->
+        <div id="myModal" class="modal" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Error</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please fill out all fields.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+        // Close the modal when the user clicks on the close button
+        $('.close').click(function() {
+            $('#myModal').modal('hide');
+        });
+
+        // Close the modal when the user clicks outside of it
+        $(window).click(function(event) {
+            if ($(event.target).hasClass('modal')) {
+                $('#myModal').modal('hide');
+            }
+        });
+    });
+</script>
+</body>
+</html>

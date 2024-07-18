@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Bar Graph</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', sans-serif;
+            background-color: #333333;
+            color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .chart-container {
+            width: 500px;
+            height: 250px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-custom">
+        <a class="navbar-brand" href="{{ url_for('home') }}">Expense Calculator</a>
+        <div class="print-button-container">
+            <button class="btn btn-primary" onclick="printChart()">Print Chart</button>
+        </div>
+        <div class="ml-auto">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+    </nav>
+    <h2 class="text-center mt-4 mb-4">Analysis for {{ name }}'s expenditure</h2>
+    <div class="container">
+        <div class="chart-container">
+            <center><canvas class="" id="expenseChart"></canvas></center>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        const expenseChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: {{ labels|tojson }},
+                datasets: [{
+                    label: 'Expenses',
+                    data: {{ values|tojson }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw;
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        function printChart() {
+            const originalCanvas = document.getElementById('expenseChart');
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Expenses of {{ name }}</title>');
+            printWindow.document.write('<style>body{display:flex;justify-content:center;}canvas{margin-top:20px;}</style>');
+            printWindow.document.write('</head><body>');
+            const newCanvas = originalCanvas.cloneNode();
+            printWindow.document.body.appendChild(newCanvas);
+            const newCtx = newCanvas.getContext('2d');
+            newCtx.drawImage(originalCanvas, 0, 0);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+    </script>
+</body>
+</html>
