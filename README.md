@@ -50,6 +50,18 @@ An Expense Website Using Flask Framework
 
 ## Screenshots
 
+![Login Page](screenshots/login.png)
+*Login Page*
+
+![Register Page](screenshots/signup.png)
+*Login Page*
+
+![Expense Management](screenshots/expense.png)
+*Expense Management Interface*
+
+![Reports Section](screenshots/report.png)
+*Reports Section*
+
 
 ## Contributing
 Contributions are welcome! Please fork the repository and create a pull request with your improvements.
